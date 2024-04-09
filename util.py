@@ -48,6 +48,7 @@ def build_prompt(query: str, context: List[str],useDataRetrieval:bool) -> List[C
         content="""
 I am going to ask you a question, which I would like you to answer
 based only on the provided context, and not any other information.
+Refer to speaker as You.
 If there is not enough information in the context to answer the question,
 say "I am not sure", then try to make a guess.
 Break your answer up into nicely readable paragraphs.
@@ -87,14 +88,16 @@ def get_response(  query , useDataRetrieval=False):
         collection = get_collection()
         result = collection.query(query_texts=[query], n_results=1, include=["documents", 'distances', ])
         docs = result.get("documents")
-        return "\n".join((docs[0] if docs else []))
-    response = get_chatGPT_response(query, docs[0] if docs and not useDataRetrieval else [], model_name,useDataRetrieval)
+        #return "\n".join((docs[0] if docs else []))
+    response = get_chatGPT_response(query, docs[0] if docs  else [], model_name,useDataRetrieval)
     return response
 def add_doc(doc, chunks):
     store_name = doc.name[:-4]
     collection = get_collection()
+    if type(chunks) is not list:
+        chunks=[chunks]
     try:
-        collection.add(documents=chunks, ids=list(map(lambda tup: f"{store_name}_{tup[0]}", enumerate(chunks))))
+        collection.upsert(documents=chunks, metadatas=[{"doc":store_name}]*len(chunks),ids=list(map(lambda tup: f"{store_name}_{tup[0]}", enumerate(chunks))))
     except Exception as e:
         print(e)
 
@@ -121,14 +124,14 @@ def read_doc(doc, gettext=False):
 
 
 def add_to_history(query, response, history):
-    tolog = f"""
-    :blue[{query}]
-
-    {response}
-    _________________
-    """
-    if not tolog in history:
-        history.append(tolog)
+    # tolog = f"""
+    # :question:{query}
+    #
+    # :high_brightness:{response}
+    # _________________
+    # """
+    #if not tolog in history:
+    history.append((query,response))
 
 
 def get_sources(answer, doc_index):

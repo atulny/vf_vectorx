@@ -20,7 +20,7 @@ def render():
         doc = st.file_uploader("Upload a Document (pdf or doc)", type=['pdf', 'doc', 'docx'])
 
         if doc:
-            chunks = read_doc(doc )
+            chunks = read_doc(doc)
             if not chunks:
                 st.markdown(f"""
                 :red[Unable to extract content from `{doc.name}`]
@@ -40,4 +40,9 @@ def render():
                 st.write(response)
                 if current_history:
                     st.markdown("""---""")
-                    st.markdown("".join(current_history))
+                    for h in current_history:
+                        st.markdown(f"###### :blue[{h[0]}]")
+                        st.markdown(f"{h[1]}")
+
+    #
+    # :high_brightness:{response}h)

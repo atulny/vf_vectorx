@@ -16,14 +16,6 @@ def render():
     libinfo = None
     with st.container():
         st.header("💬 Chat with a document")
-        with st.expander("Document Library"):
-            st.markdown("""
-                #### Coming Soon ...
-                
-                ---------
-                :blue[The Document Library will have a list of curated documents to browse and select for Chat!]
-                """)
-
 
         doc = st.file_uploader("Upload a Document (pdf or doc)", type=['pdf', 'doc', 'docx'])
 

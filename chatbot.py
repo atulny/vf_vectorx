@@ -34,7 +34,7 @@ def render():
         if not query:
             query = "What is this document about?"
         if query:
-            response = get_response( query)
+            response = get_response( query , useDataRetrieval)
             if response:
                 add_to_history(query, response, history)
                 st.write(response)

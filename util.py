@@ -38,19 +38,24 @@ def get_collection(name=None):
         COLLECTIONS[name] = collection
     return collection
 
-def build_prompt(query: str, context: List[str]) -> List[ChatCompletionMessageParam]:
+def build_prompt(query: str, context: List[str],useDataRetrieval:bool) -> List[ChatCompletionMessageParam]:
     """
     Builds a prompt for the LLM. #
 
     """
+    content="Break your answer up into nicely readable paragraphs."
+    if useDataRetrieval:
+        content="""
+I am going to ask you a question, which I would like you to answer
+based only on the provided context, and not any other information.
+If there is not enough information in the context to answer the question,
+say "I am not sure", then try to make a guess.
+Break your answer up into nicely readable paragraphs.
+        """
 
     system: ChatCompletionMessageParam = {
         "role": "system",
-        "content": "I am going to ask you a question, which I would like you to answer"
-        "based only on the provided context, and not any other information."
-        "If there is not enough information in the context to answer the question,"
-        'say "I am not sure", then try to make a guess.'
-        "Break your answer up into nicely readable paragraphs.",
+        "content": content,
     }
     user: ChatCompletionMessageParam = {
         "role": "user",
@@ -61,25 +66,29 @@ def build_prompt(query: str, context: List[str]) -> List[ChatCompletionMessagePa
     return [system, user]
 
 
-def get_chatGPT_response(query: str, context: List[str], model_name: str) -> str:
+def get_chatGPT_response(query: str, context: List[str], model_name: str,useDataRetrieval:bool) -> str:
     """
     Queries the GPT API to get a response to the question.
     """
     response = openai.chat.completions.create(
         model=model_name,
-        messages=build_prompt(query, context),
+        messages=build_prompt(query, context,useDataRetrieval),
     )
 
     return response.choices[0].message.content  # type: ignore
 
-def get_response(  query):
+def get_response(  query , useDataRetrieval=False):
     """
     returns  response to the query
     """
-    collection = get_collection()
-    result = collection.query(query_texts=[query], n_results=1, include=["documents", 'distances', ])
-    docs = result.get("documents")
-    response = get_chatGPT_response(query, docs[0] if len(docs) else [], model_name)
+    docs = []
+
+    if useDataRetrieval:
+        collection = get_collection()
+        result = collection.query(query_texts=[query], n_results=1, include=["documents", 'distances', ])
+        docs = result.get("documents")
+        return "\n".join((docs[0] if docs else []))
+    response = get_chatGPT_response(query, docs[0] if docs and not useDataRetrieval else [], model_name,useDataRetrieval)
     return response
 def add_doc(doc, chunks):
     store_name = doc.name[:-4]

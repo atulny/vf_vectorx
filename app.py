@@ -10,8 +10,8 @@ hide_streamlit_style = """
 #MainMenu {visibility: hidden;}
 #stDecoration  {visibility: hidden;}
 .stDeployButton{visibility: hidden;}
-header{display:none !important}
-.block-container{padding-top:.5rem !important}
+.stTextInput label {display:none !important}
+.block-container{padding-top:1rem !important}
 [data-testid="stSidebarUserContent"]{padding-top:.8em;}
 [data-testid="block-container"]{padding-top:1em;}
 footer {visibility: hidden;}

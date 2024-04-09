@@ -31,8 +31,8 @@ def render():
         useDataRetrieval = st.checkbox("Use Data Retrieval", value=False, key=None, help=None, on_change=None, args=None, kwargs=None, disabled=False, label_visibility="visible")
         query = st.text_input("x", label_visibility="hidden", placeholder="Ask questions about your Document:")
         current_history = history[::-1]
-        if not query:
-            query = "What is this document about?"
+        #if not query:
+            #query = "What is this document about?"
         if query:
             response = get_response( query , useDataRetrieval)
             if response:

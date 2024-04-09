@@ -78,15 +78,19 @@ def get_chatGPT_response(query: str, context: List[str], model_name: str,useData
 
     return response.choices[0].message.content  # type: ignore
 
-def get_response(  query , useDataRetrieval=False):
+def get_response(  query , useDataRetrieval=False, docname=None):
     """
     returns  response to the query
     """
     docs = []
-
+    if docname:
+        useDataRetrieval = True
     if useDataRetrieval:
         collection = get_collection()
-        result = collection.query(query_texts=[query], n_results=1, include=["documents", 'distances', ])
+        wherecriteria={}
+        if docname:
+            wherecriteria = {"doc": docname}
+        result = collection.query(query_texts=[query], n_results=1, include=["documents", 'distances', ],where=wherecriteria)
         docs = result.get("documents")
         #return "\n".join((docs[0] if docs else []))
     response = get_chatGPT_response(query, docs[0] if docs  else [], model_name,useDataRetrieval)
@@ -102,6 +106,12 @@ def add_doc(doc, chunks):
         print(e)
 
 
+def get_all_docnames():
+    collection = get_collection()
+
+    all_metadatas = collection.get(include=["metadatas"]).get('metadatas')
+    distinct_keys = set([x.get('doc') for x in all_metadatas])
+    return list(distinct_keys)
 def read_doc(doc, gettext=False):
     text = ""
     if not doc:

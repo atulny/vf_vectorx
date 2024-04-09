@@ -11,6 +11,7 @@ hide_streamlit_style = """
 #stDecoration  {visibility: hidden;}
 .stDeployButton{visibility: hidden;}
 .stTextInput label {display:none !important}
+.stSelectbox label {display:none !important}
 .block-container{padding-top:1rem !important}
 [data-testid="stSidebarUserContent"]{padding-top:.8em;}
 [data-testid="block-container"]{padding-top:1em;}

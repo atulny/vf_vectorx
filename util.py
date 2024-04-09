@@ -79,7 +79,7 @@ def get_response(  query):
     collection = get_collection()
     result = collection.query(query_texts=[query], n_results=1, include=["documents", 'distances', ])
     docs = result.get("documents")
-    response = get_chatGPT_response(query, docs[0], model_name)
+    response = get_chatGPT_response(query, docs[0] if len(docs) else [], model_name)
     return response
 def add_doc(doc, chunks):
     store_name = doc.name[:-4]

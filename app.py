@@ -21,7 +21,7 @@ footer {visibility: hidden;}
 
 st.set_page_config(layout="wide")
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-tab1, = st.tabs(["❊ Domain Knowledge"])
+tab1, = st.tabs(["❊ Ask me"])
 image_dev = Image.open('asset/dev.png')
 #load_dotenv()
 #init()

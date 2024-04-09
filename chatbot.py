@@ -28,15 +28,16 @@ def render():
                 """)
                 return
             add_doc(doc, chunks)
-            query = st.text_input("x", label_visibility="hidden", placeholder="Ask questions about your Document:")
-            current_history = history[::-1]
-            if not query:
-                query = "What is this document about?"
-            if query:
-                response = get_response( query)
-                if response:
-                    add_to_history(query, response, history)
-                    st.write(response)
-                    if current_history:
-                        st.markdown("""---""")
-                        st.markdown("".join(current_history))
+        useDataRetrieval = st.checkbox("Use Data Retrieval", value=False, key=None, help=None, on_change=None, args=None, kwargs=None, disabled=False, label_visibility="visible")
+        query = st.text_input("x", label_visibility="hidden", placeholder="Ask questions about your Document:")
+        current_history = history[::-1]
+        if not query:
+            query = "What is this document about?"
+        if query:
+            response = get_response( query)
+            if response:
+                add_to_history(query, response, history)
+                st.write(response)
+                if current_history:
+                    st.markdown("""---""")
+                    st.markdown("".join(current_history))

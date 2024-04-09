@@ -15,7 +15,7 @@ model = None
 def render():
     libinfo = None
     with st.container():
-        st.header("💬 Chat with a document")
+        st.header("💬 Chat with Virtual Friend")
 
         doc = st.file_uploader("Upload a Document (pdf or doc)", type=['pdf', 'doc', 'docx'])
 

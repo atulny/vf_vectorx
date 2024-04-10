@@ -30,9 +30,10 @@ def render():
                 return
             context_name = context
             if not context_name:
-                context_name = doc.name[-4]
+                context_name = doc.name[:-4]
             add_doc(context_name, chunks)
         st.session_state['doclist'] = get_all_docnames()
+        st.subheader("Contexts")
         for d in st.session_state.doclist:
             st.markdown("- " + d)
 

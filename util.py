@@ -38,25 +38,35 @@ def get_collection(name=None):
         COLLECTIONS[name] = collection
     return collection
 
-def build_prompt(query: str, context: List[str],useDataRetrieval:bool) -> List[ChatCompletionMessageParam]:
+def build_prompt(query: str, context: List[str],formatwithOpenAI:bool) -> List[ChatCompletionMessageParam]:
     """
     Builds a prompt for the LLM. #
 
     """
     content="Break your answer up into nicely readable paragraphs."
-    if useDataRetrieval:
+    if formatwithOpenAI and context:
+        content2 = """
+    Pretend you are a virtual friend whose name is Stephanie, 
+    remember you are not a virtual assistant, 
+    you are a friend. Use the document as a context, 
+    write a response to continue the conversation. 
+    Do not mention context. Keep the response short and ask probing questions:
+        """
         content="""
-I am going to ask you a question, which I would like you to answer
-based only on the provided context, and not any other information.
-Refer to speaker as You.
-If there is not enough information in the context to answer the question,
-say "I am not sure", then try to make a guess.
+Pretend you are a virtual friend whose name is Stephanie, 
+remember you are not a virtual assistant, you are a friend. 
+Your goal is to help the user improve their mental health. 
+Write a response to continue this conversation, 
+introduce yourself if not already discussed, 
+do not ask more than one question, 
+make sure to answer any question the user has asked, use the document to help come up with answer:
+
 Break your answer up into nicely readable paragraphs.
         """
 
     system: ChatCompletionMessageParam = {
         "role": "system",
-        "content": content,
+        "content": content
     }
     user: ChatCompletionMessageParam = {
         "role": "user",
@@ -67,36 +77,39 @@ Break your answer up into nicely readable paragraphs.
     return [system, user]
 
 
-def get_chatGPT_response(query: str, context: List[str], model_name: str,useDataRetrieval:bool) -> str:
+def get_chatGPT_response(query: str, context: List[str], model_name: str,formatwithOpenAI:bool) -> str:
     """
     Queries the GPT API to get a response to the question.
     """
     response = openai.chat.completions.create(
         model=model_name,
-        messages=build_prompt(query, context,useDataRetrieval),
+        messages=build_prompt(query, context,formatwithOpenAI),
     )
 
     return response.choices[0].message.content  # type: ignore
 
-def get_response(  query , useDataRetrieval=False, docname=None):
+def get_response(  query , formatwithOpenAI=False, docname=None):
     """
     returns  response to the query
     """
     docs = []
+
     if docname:
-        useDataRetrieval = True
-    if useDataRetrieval:
+        print("loading DB")
         collection = get_collection()
-        wherecriteria={}
-        if docname:
-            wherecriteria = {"doc": docname}
+        wherecriteria = {"doc": docname}
+        print("searching")
         result = collection.query(query_texts=[query], n_results=1, include=["documents", 'distances', ],where=wherecriteria)
         docs = result.get("documents")
-        #return "\n".join((docs[0] if docs else []))
-    response = get_chatGPT_response(query, docs[0] if docs  else [], model_name,useDataRetrieval)
+        if not formatwithOpenAI:
+            return "\n".join((docs[0] if docs else []))
+
+    print("formatting with Model")
+    response = get_chatGPT_response(query, docs[0] if docs  else [], model_name, formatwithOpenAI)
+    print("done")
     return response
 def add_doc(doc, chunks):
-    store_name = doc.name[:-4]
+    store_name = doc  #.name[:-4]
     collection = get_collection()
     if type(chunks) is not list:
         chunks=[chunks]

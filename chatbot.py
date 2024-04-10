@@ -16,31 +16,19 @@ def render():
     libinfo = None
     with st.container():
         st.header("💬 Chat with Virtual Friend")
-
-        doc = st.file_uploader("Upload a Document (pdf or doc)", type=['pdf', 'doc', 'docx'])
-
-        if doc:
-            chunks = read_doc(doc)
-            if not chunks:
-                st.markdown(f"""
-                :red[Unable to extract content from `{doc.name}`]
-                Please try again with a different document.
-                """)
-                return
-            add_doc(doc, chunks)
-        docs=get_all_docnames()
-        print(docs)
-        #col1,col2=st.columns([1,2],  gap="small")
+        if not "doclist" in st.session_state:
+            st.session_state['doclist'] = get_all_docnames()
+        col1,col2=st.columns([1,2],  gap="small")
         useDataRetrieval=False
-        #useDataRetrieval = col1.checkbox("Use Data Retrieval", value=False, key=None, help=None, on_change=None, args=None, kwargs=None, disabled=False, label_visibility="visible")
+        formatwithOpenAI = col1.checkbox("format with OpenAI",key="format_withOpenAI", value=True,  help=None, on_change=None, args=None, kwargs=None, disabled=False, label_visibility="visible")
 
-        selected_doc = st.selectbox("Context", options=[default_doc]+docs, index=None,  key=None, help=None, on_change=None, args=None, kwargs=None,   placeholder="Choose a document/context", disabled=False, label_visibility="hidden")
-        query = st.text_input("x", label_visibility="hidden", placeholder="Ask questions about your Document:")
+        selected_doc = col2.selectbox("Context", key="selected_context", options=[default_doc]+st.session_state.doclist, index=None,   help=None, on_change=None, args=None, kwargs=None,   placeholder="Choose a document/context", disabled=False, label_visibility="hidden")
+        query = st.text_input("x", key="user_query", label_visibility="hidden", placeholder="Ask questions about your Document:")
         current_history = history[::-1]
         #if not query:
             #query = "What is this document about?"
         if query:
-            response = get_response( query , useDataRetrieval,"" if selected_doc==default_doc else selected_doc)
+            response = get_response( query , formatwithOpenAI,"" if selected_doc==default_doc else selected_doc)
             if response:
                 add_to_history(query, response, history)
                 st.write(response)

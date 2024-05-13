@@ -10,25 +10,6 @@ await clerk.load();
 //app.setAttribute("id","app")
 
 
-// Add a click handler to our button. It will send data back to Streamlit.
-// let numClicks = 0
-// let isFocused = false
-// console.log("XXX")
-// button.onclick = function(): void {
-//   // Increment numClicks, and pass the new value back to
-//   // Streamlit via `Streamlit.setComponentValue`.
-//   numClicks += 1
-//   Streamlit.setComponentValue(numClicks)
-// }
-//
-// button.onfocus = function(): void {
-//   isFocused = true
-// }
-//
-// button.onblur = function(): void {
-//   isFocused = false
-// }
-
 /**
  * The component's render function. This will be called immediately after
  * the component is initially loaded, and then again every time the
@@ -59,16 +40,18 @@ async function extract_data(listener){
             data.session_id = listener.session.id
             data.expiresAt = listener.session.expireAt
             data.createdAt = listener.session.createdAt
-            listener.session.getToken().then(
-                function (token) {
-                    data.token = token;
+            data.token = await listener.session.getToken({template : 'default'})
 
-                    send_data(data);
-                    return data
-                }
-            )
+
         }
+        send_data(data)
         return data
+    } else if (listener?.client){
+        const signInDiv =
+            document.getElementById("sign-in");
+
+        clerk.mountSignIn(signInDiv);
+        return {status:'No session'}
     }
 }
 function send_data(data){
@@ -87,20 +70,25 @@ function send_data(data){
     }
 
 }
-function onRender(event ) {
+async function onRender(event ) {
     // Get the RenderData from the event
     const data = (event).detail
-    if (clerk.user) {
-        extract_data(clerk) .then((data)=>send_data(data))
+    if (clerk.user ) {
         const userButtonDiv =
             document.getElementById("user-button");
-        clerk.mountUserButton(userButtonDiv);
+        //clerk.redirectToSignIn({signInForceRedirectUrl:"javascript:void(0)"})
+        clerk.mountUserButton(userButtonDiv,{showName:true,userProfileMode:"modal",afterSignOutUrl:"javascript:void(0)"});
     } else {
         const signInDiv =
             document.getElementById("sign-in");
 
         clerk.mountSignIn(signInDiv);
     }
+    let userdata = await extract_data(clerk)
+    if (userdata){
+        send_data(userdata);
+    }
+
     if (data.theme) {
 
     }

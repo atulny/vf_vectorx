@@ -1,8 +1,7 @@
 import streamlit as st
-from PIL import Image
 #from dotenv import load_dotenv
 
-from chatbot import render
+from pages.Chat import render
 from doc_upload import render as render_upload
 
 #from config import init

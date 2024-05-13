@@ -13,3 +13,7 @@ __pycache__/
 .idea/**/dictionaries
 .idea/**/shelf
 chroma/
+node_modules
+node_modules/
+node_modules/*
+node_modules/***/

@@ -38,19 +38,35 @@ def get_collection(name=None):
         COLLECTIONS[name] = collection
     return collection
 
-def build_prompt(query: str, context: List[str]) -> List[ChatCompletionMessageParam]:
+def build_prompt(query: str, context: List[str],formatwithOpenAI:bool) -> List[ChatCompletionMessageParam]:
     """
     Builds a prompt for the LLM. #
 
     """
+    content="Break your answer up into nicely readable paragraphs."
+    if formatwithOpenAI and context:
+        content2 = """
+    Pretend you are a virtual friend whose name is Stephanie, 
+    remember you are not a virtual assistant, 
+    you are a friend. Use the document as a context, 
+    write a response to continue the conversation. 
+    Do not mention context. Keep the response short and ask probing questions:
+        """
+        content="""
+Pretend you are a virtual friend whose name is Stephanie, 
+remember you are not a virtual assistant, you are a friend. 
+Your goal is to help the user improve their mental health. 
+Write a response to continue this conversation, 
+introduce yourself if not already discussed, 
+do not ask more than one question, 
+make sure to answer any question the user has asked, use the document to help come up with answer:
+
+Break your answer up into nicely readable paragraphs.
+        """
 
     system: ChatCompletionMessageParam = {
         "role": "system",
-        "content": "I am going to ask you a question, which I would like you to answer"
-        "based only on the provided context, and not any other information."
-        "If there is not enough information in the context to answer the question,"
-        'say "I am not sure", then try to make a guess.'
-        "Break your answer up into nicely readable paragraphs.",
+        "content": content
     }
     user: ChatCompletionMessageParam = {
         "role": "user",
@@ -61,35 +77,54 @@ def build_prompt(query: str, context: List[str]) -> List[ChatCompletionMessagePa
     return [system, user]
 
 
-def get_chatGPT_response(query: str, context: List[str], model_name: str) -> str:
+def get_chatGPT_response(query: str, context: List[str], model_name: str,formatwithOpenAI:bool) -> str:
     """
     Queries the GPT API to get a response to the question.
     """
     response = openai.chat.completions.create(
         model=model_name,
-        messages=build_prompt(query, context),
+        messages=build_prompt(query, context,formatwithOpenAI),
     )
 
     return response.choices[0].message.content  # type: ignore
 
-def get_response(  query):
+def get_response(  query , formatwithOpenAI=False, docname=None):
     """
     returns  response to the query
     """
-    collection = get_collection()
-    result = collection.query(query_texts=[query], n_results=1, include=["documents", 'distances', ])
-    docs = result.get("documents")
-    response = get_chatGPT_response(query, docs[0], model_name)
+    docs = []
+
+    if docname:
+        print("loading DB")
+        collection = get_collection()
+        wherecriteria = {"doc": docname}
+        print("searching")
+        result = collection.query(query_texts=[query], n_results=1, include=["documents", 'distances', ],where=wherecriteria)
+        docs = result.get("documents")
+        if not formatwithOpenAI:
+            return "\n".join((docs[0] if docs else []))
+
+    print("formatting with Model")
+    response = get_chatGPT_response(query, docs[0] if docs  else [], model_name, formatwithOpenAI)
+    print("done")
     return response
 def add_doc(doc, chunks):
-    store_name = doc.name[:-4]
+    store_name = doc  #.name[:-4]
     collection = get_collection()
+    if type(chunks) is not list:
+        chunks=[chunks]
     try:
-        collection.add(documents=chunks, ids=list(map(lambda tup: f"{store_name}_{tup[0]}", enumerate(chunks))))
+        collection.upsert(documents=chunks, metadatas=[{"doc":store_name}]*len(chunks),ids=list(map(lambda tup: f"{store_name}_{tup[0]}", enumerate(chunks))))
     except Exception as e:
         print(e)
 
 
+def get_all_docnames():
+    collection = get_collection()
+
+    all_metadatas = collection.get(include=["metadatas"]).get('metadatas')
+    distinct_keys = set([x.get('doc') for x in all_metadatas])
+    return list(distinct_keys)
 def read_doc(doc, gettext=False):
     text = ""
     if not doc:
@@ -112,14 +147,14 @@ def read_doc(doc, gettext=False):
 
 
 def add_to_history(query, response, history):
-    tolog = f"""
-    :blue[{query}]
-
-    {response}
-    _________________
-    """
-    if not tolog in history:
-        history.append(tolog)
+    # tolog = f"""
+    # :question:{query}
+    #
+    # :high_brightness:{response}
+    # _________________
+    # """
+    #if not tolog in history:
+    history.append((query,response))
 
 
 def get_sources(answer, doc_index):

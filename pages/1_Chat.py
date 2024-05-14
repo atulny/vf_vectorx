@@ -43,20 +43,20 @@ class FriendProfile(BaseModel):
     #created_by_system: Optional[bool] = None
     #is_public: Optional[bool] = False
 
-new_friend_modal = Modal(
+new_friend_modal1 = Modal(
     "Create Friend",
     key="new-friend-modal",
     # Optional
     padding=10,  # default value
     max_width=744,  # default value
 )
-if new_friend_modal.is_open():
-    with new_friend_modal.container():
+if new_friend_modal1.is_open():
+    with new_friend_modal1.container():
         data = {}
         friendprofile = FriendProfile(**data)
         sp.pydantic_input(model=friendprofile, key="newfriend")
         submit_button = st.form_submit_button(label="Submit")
-        st.button("close", on_click=lambda *a: new_friend_modal.close(rerun_condition=False))
+        st.button("close", on_click=lambda *a: new_friend_modal1.close(rerun_condition=False))
 
 friend_modal = Modal(
     "Friend Details",
@@ -116,7 +116,7 @@ def render():
                 st.markdown("<div class='p__h full-length shaded'></div>", unsafe_allow_html=True)
                 name_clicked = st.button("[+] Add a Friend")
                 if name_clicked:
-                    friend_modal.open()
+                    new_friend_modal1.open()
                 friends = get_friend_list()
                 if friends:
                     icons = ["file-earmark-person"] * len(friends)
@@ -124,11 +124,6 @@ def render():
                                            menu_icon="person-hearts",
                                            default_index=0)
                     if selected:
-                        if "[+]" in selected:
-                            # sleep(2)
-                            new_friend_modal.open()
-                            return
-                        else:
                             friend = [f for f in friends if f.get("name") == selected]
                             if friend:
                                 load_friend_messages(friend[0].get("id"))
@@ -140,6 +135,7 @@ def render():
                         name_clicked = st.button(friend[0].get('name'))
                         if name_clicked:
                             friend_modal.open()
+                            pass
                     with st.container():
                         st.chat_input(key='user_query', on_submit=on_user_submit)
                         button_b_pos = "1rem"

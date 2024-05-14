@@ -129,6 +129,14 @@ def get_friend_list():
     user = st.session_state.user
     friends = user.get("friend_ids")  if user else []
     return friends
+
+def get_friend_profile(friend_id):
+    auth = get_auth()
+    print(f"############################ {auth} ############################")
+    result = requests.get(f"{BASE_URL}/friend_profile?id={friend_id}", headers={"Authorization": auth, "Accept": "application/json"})
+    result = result.json()
+    data = result.get("data")
+    return data
 @error_decorator
 def get_user():
     auth = get_auth()

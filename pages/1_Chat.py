@@ -1,14 +1,17 @@
 import sys
 from time import sleep
+from typing import Optional
 
+from pydantic import BaseModel
 from streamlit_float import *
 from streamlit_option_menu import option_menu
 import streamlit as st
 from streamlit_modal import Modal
 import streamlit.components.v1 as components
+import streamlit_pydantic as sp
 
 from chat_util import init_messages, get_user, get_friend_list, load_friend_messages, get_messages, get_response, \
-    chat_page_init
+    chat_page_init, get_friend_profile
 from util import auth_decorator
 
 sys.path.append("../../..")
@@ -17,17 +20,60 @@ st.set_page_config(layout="wide", page_title="Chat")
 
 chat_page_init()  # lots of magic happens here
 
+class Location(BaseModel):
+    city: Optional[str] = None
+    state: Optional[str] = None
+    country: Optional[str] = "USA"
+class FriendProfile(BaseModel):
+    #id: Optional[str] = None
+    name: Optional[str] = None
+    dob_ts: Optional[int] = None
+    gender: Optional[str] = None
+    description: Optional[str] = None
+
+    #preferred_pronoun: Optional[str] = None
+    #living_situation: Optional[str] = None
+    #get_friend_profileinteraction_frequency: Optional[str] = None
+    interests: Optional[list[str]] = []
+    #hobbies: Optional[list[str]] = []
+    #reminders_preference: Optional[bool] = False
+    #created_by: Optional[str] = None
+    #created_on: Optional[datetime.datetime] = None
+    location: Optional[Location] = None
+    #created_by_system: Optional[bool] = None
+    #is_public: Optional[bool] = False
+
+new_friend_modal = Modal(
+    "Create Friend",
+    key="new-friend-modal",
+    # Optional
+    padding=10,  # default value
+    max_width=744,  # default value
+)
+if new_friend_modal.is_open():
+    with new_friend_modal.container():
+        data = {}
+        friendprofile = FriendProfile(**data)
+        sp.pydantic_input(model=friendprofile, key="newfriend")
+        submit_button = st.form_submit_button(label="Submit")
+        st.button("close", on_click=lambda *a: new_friend_modal.close(rerun_condition=False))
+
 friend_modal = Modal(
     "Friend Details",
-    key="chat-modal",
+    key="friend-modal",
     # Optional
-    padding=20,  # default value
+    padding=10,  # default value
     max_width=744,  # default value
 )
 if friend_modal.is_open():
     with friend_modal.container():
         st.write("Friend Profile")
-
+        data = get_friend_profile(st.session_state.selectedfriend)
+        if data.get("interests"):
+            data["interests"] = data["interests"].split(",")
+        friendprofile = FriendProfile(**data)
+        sp.pydantic_input(model=friendprofile, key="friend")
+        submit_button = st.form_submit_button(label="Submit")
         st.button("close", on_click=lambda *a: friend_modal.close(rerun_condition=False))
 
 
@@ -60,6 +106,7 @@ def render():
             data = get_user()
             st.session_state.user = data
 
+
         with st.container():
             st.header("💬 Chat with Virtual Friend")
             border = True
@@ -79,7 +126,7 @@ def render():
                     if selected:
                         if "[+]" in selected:
                             # sleep(2)
-                            friend_modal.open()
+                            new_friend_modal.open()
                             return
                         else:
                             friend = [f for f in friends if f.get("name") == selected]

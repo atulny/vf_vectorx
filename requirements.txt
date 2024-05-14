@@ -6,3 +6,4 @@ streamlit-float
 streamlit-modal
 streamlit-option-menu
 streamlit-pydantic
+pydantic==1.8

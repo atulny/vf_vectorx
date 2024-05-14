@@ -5,7 +5,7 @@ from streamlit_float import *
 
 from util import page_init, get_auth, error_decorator
 
-BASE_URL="http://127.0.0.1:5000"
+BASE_URL="https://api.junctions.com"
 def chat_page_init():
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -15,13 +15,17 @@ def chat_page_init():
         st.session_state.selectedfriend = ""
     if "waiting_response" not in st.session_state:
         st.session_state.waiting_response = False
+
     page_init()
     hide_streamlit_style = """
     <style>
-    [data-testid="stHorizontalBlock"]     {position: relative !important;height: 100% !important;}
+    [data-testid="stHorizontalBlock"]     {
+        position: relative !important;height: 100% !important;
+    }
+    
     .stChatMessage {
-            max-width:80%;
-            min-width:80%;
+            max-width:85%;
+            min-width:85%;
 
     }
     .stChatMessage:has([data-testid="chatAvatarIcon-user"]){
@@ -29,11 +33,17 @@ def chat_page_init():
         max-width:80%;
         align-self: flex-end;
     }
+    
     .stChatMessage:has([data-testid="chatAvatarIcon-user"]) p{
         text-align: right !important;
     }
+    
     [data-testid="column"] > [data-testid="stVerticalBlockBorderWrapper"] > div >[data-testid="stVerticalBlock"]>[data-testid="stVerticalBlockBorderWrapper"] 
-    {max-height: 85vh!important;height: calc(100vh - 160px) !important;position:relative;overflow:auto;border:1px solid #ccc;}
+    {
+        max-height: 85vh!important;height: calc(100vh - 200px) !important;
+        position:relative;overflow:auto;border:1px solid #ccc;
+    }
+        
     .element-container:has(.friend-label) + .element-container:has(button) button{
         text-align:left;
         margin:0;border:0 !important;
@@ -49,16 +59,18 @@ def chat_page_init():
         z-index:5;
         opacity:.7;
      }
-         .element-container:has(.friend-label) + .element-container:has(button) button p{
+     .element-container:has(.friend-label) + .element-container:has(button) button p{
          font-size:200% !important;padding:0;
                  font-weight:bold !important;
                          background-color:white;
-
-
-}
-    .friend-list{background-color:#fafafa}
-    [data-testid="column"]:has(.friend-list-inner){padding:1rem;}
-    .is-typing{position:absolute;bottom:30px; background-color:red; height:20px; left:30px; width:200px;z-index:100}
+    }
+    
+    
+    [data-testid="column"]:has(.friend-list-inner){
+        padding:.5rem;
+        max-height: 85vh!important;height: calc(100vh - 200px) !important;
+    }
+    
     </style>
 
     """

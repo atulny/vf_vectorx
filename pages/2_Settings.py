@@ -14,7 +14,7 @@ def render():
     with col1:
         st.markdown("<div class='full-length shaded'></div>", unsafe_allow_html=True)
         selected = option_menu("Settings", ["My Profile","Privacy Message","Logout"],
-                               menu_icon="person-hearts", default_index=0)
+                               menu_icon="gear",icons=["credit-card-2-front"], default_index=0)
         if selected:
             st.session_state.selected_setting = selected
 

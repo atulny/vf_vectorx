@@ -11,38 +11,75 @@ def page_init():
     hide_streamlit_style = """
     <style>
     *, html {scroll-behavior: smooth !important;}
-        .header-wrap{border-bottom:1px solid #ccc;background-color:#efefef;
+        #MainMenu {visibility: hidden;}
+    
+    #stDecoration  {visibility: hidden;}
+    
+    .stDeployButton{visibility: hidden;}
+    
+    header{display:none !important}
+    
+    [data-testid="stSidebarUserContent"]{padding-top:.8em;}
+    
+    [data-testid="block-container"]{padding-top:1em;}
+    
+    footer {visibility: hidden;}
+    .block-container {padding:.5rem 4rem !important}
+    
+    .header-wrap{border-bottom:1px solid #ccc;background-color:#efefef;
         font-size:150%;padding:0 10px;position:fixed;top:1px;left:1px;width:100%;
         height:3rem;display:flex;
-       flex-direction:row;justify-content:space-between;}
-    .header-wrap .header-right img {height:28px;margin-right:5px;}
-    header-wrap .header-right img, header-wrap .header-right span{display:inline-block;vertical-align:middle;}
-    [data-testid="stSidebarNav"] {
-background-size: 240px auto;
-background-repeat: no-repeat;
-background-position:center center !important;
-padding-top:370px !important;
-box-sizing:border;
-margin-top:-150px !important;
+       flex-direction:row;justify-content:space-between;
     }
-    [data-testid='column']:has(.full-length){height:90vh !important}
-    [data-testid='column']:has(.shaded){background-color:#efefef;}
-  .block-container > [data-testid='stVerticalBlockBorderWrapper'] >div > [data-testid='stVerticalBlock']{
-  margin-top:-40px
-  } 
+       
+    .header-wrap .header-right img {height:28px;margin-right:5px;}
     
-    #MainMenu {visibility: hidden;}
-    #stDecoration  {visibility: hidden;}
-    .stDeployButton{visibility: hidden;}
-    header{display:none !important}
-    [data-testid="stSidebarUserContent"]{padding-top:.8em;}
-    [data-testid="block-container"]{padding-top:1em;}
-    footer {visibility: hidden;}
-     .block-container {padding:.5rem 4rem !important}
-
-     .block-container  .block-container{padding:0 !important}
-     [data-testid="stSidebarNavLink"]{
+    [data-testid="stSidebarNav"] {
+        background-size: 240px auto;
+        background-repeat: no-repeat;
+        background-position:center center !important;
+        padding-top:370px !important;
+        box-sizing:border;
+        margin-top:-150px !important;
+    }
+    
+    [data-testid='column']:has(.full-length){height:75vh !important}
+    
+    [data-testid='column']:has(.shaded){background-color:#f0f2f6;}
+    
+    .block-container:has(.header-wrap) > [data-testid='stVerticalBlockBorderWrapper'] >div > [data-testid='stVerticalBlock']{
+      margin-top:-200px
+    } 
+      
+    .element-container > .stMarkdown > [data-testid='stMarkdownContainer'] > .p__h{
+        overflow;hidden;height:0  !important;max-height:0  !important;margin:0  !important;padding:0 !important;
+    }
+    
+    .block-container  .block-container{
+        padding:0 !important
+    }
+    
+    [data-testid="stSidebarNavLink"]{
        font-size:150%;
+     }
+    .main-wrap{
+    }
+    .main-wrap .main-wrap-header{
+             font-size:180%;
+    }
+    .main-wrap .main-wrap-header span{
+         color:#aaa;
+    }
+    .main-wrap .main-wrap-tips{
+        font-size90%;
+        color:#999;
+        font-style: italic;
+    }
+    .main-wrap .main-wrap-sub-header{
+             font-size:110%;
+    }
+     .element-container:has(.main-wrap) + .element-container{
+       background-image:url("./asset/hero-1-5.png")
      }
     </style>
 

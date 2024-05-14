@@ -4,11 +4,7 @@ const clerkPubKey = "pk_test_cHJpbWUtc2hyaW1wLTQwLmNsZXJrLmFjY291bnRzLmRldiQ" ;
 
 // Add text and a button to the DOM. (You could also add these directly
 // to index.html.)
-const clerk = new Clerk(clerkPubKey);
-await clerk.load();
-
-//app.setAttribute("id","app")
-
+var clerk = null;
 
 /**
  * The component's render function. This will be called immediately after
@@ -63,7 +59,6 @@ function send_data(data){
         diffs.push("all")
     }
     if (diffs.length){
-        console.log(diffs)
         current_data = Object.assign({},data)
         Streamlit.setComponentValue(data)
 
@@ -71,8 +66,24 @@ function send_data(data){
 
 }
 async function onRender(event ) {
-    // Get the RenderData from the event
     const data = (event).detail
+
+    if (!clerk){
+        let clerkPubKey = data.clerkPubKey
+        clerk = new Clerk(clerkPubKey);
+        await clerk.load();
+        clerk.addListener(async function addListener(listener ){
+            let data  = await extract_data(listener)
+            if (data){
+                send_data(data);
+            }
+        })
+    }
+    let userdata = await extract_data(clerk)
+    if (userdata){
+        send_data(userdata);
+    }
+    // Get the RenderData from the event
     if (clerk.user ) {
         const userButtonDiv =
             document.getElementById("user-button");
@@ -84,10 +95,7 @@ async function onRender(event ) {
 
         clerk.mountSignIn(signInDiv);
     }
-    let userdata = await extract_data(clerk)
-    if (userdata){
-        send_data(userdata);
-    }
+
 
     if (data.theme) {
 
@@ -97,12 +105,7 @@ async function onRender(event ) {
 
 
 
-clerk.addListener(async function addListener(listener ){
-    let data  = await extract_data(listener)
-    if (data){
-        send_data(data);
-    }
- })
+
 
 Streamlit.events.addEventListener(Streamlit.RENDER_EVENT, onRender)
 Streamlit.setComponentReady()

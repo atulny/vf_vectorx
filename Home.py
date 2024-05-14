@@ -65,7 +65,7 @@ with st.container():
             st.subheader("MISSION")
             st.markdown("""Chat app for people to communicate with a virtual friend when they are feeling lonely or just need someone to talk to. Virtual friend demographics can be random or personalized. Y"
                             our virtual friend gets to know you and remembers to check-in on occasion. Powered by LLM.""")
-            streamlit_js_eval(js_expressions="self.parent.parent != top && top.location.reload()")
+            streamlit_js_eval(js_expressions="self.parent.parent != top && top.reload()")
             set_bg_hack("./asset/hero-1-5.png")
             streamlit_js_eval(js_expressions=f"""
                 let fn = ()=>{{         

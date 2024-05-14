@@ -12,6 +12,6 @@ git clone https://github.com/atulny/vf_vectorx.git
 - Specify .env ( copying from .sampleenv )
 
 ### Run
-`streamlit run app.py`
+`streamlit run Home.py`
 
 

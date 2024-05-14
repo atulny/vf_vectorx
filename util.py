@@ -71,6 +71,7 @@ def page_init():
     }
     .main-wrap .main-wrap-header span{
          color:#aaa;
+         text-transform: capitalize;
     }
     .main-wrap .main-wrap-tips{
         font-size90%;

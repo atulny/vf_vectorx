@@ -33,6 +33,7 @@ def set_bg_hack(main_bg):
               background-position: left 60px;
               background-size:contain;
                 background-repeat: no-repeat;
+                opacity:.6;
 
          }}
          </style>

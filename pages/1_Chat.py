@@ -6,13 +6,12 @@ from pydantic import BaseModel
 from streamlit_float import *
 from streamlit_option_menu import option_menu
 import streamlit as st
-from streamlit_modal import Modal
-import streamlit.components.v1 as components
-import streamlit_pydantic as sp
 
 from chat_util import init_messages, get_user, get_friend_list, load_friend_messages, get_messages, get_response, \
     chat_page_init, get_friend_profile
 from util import auth_decorator
+from typing import Annotated
+from streamlit_pydantic_form import st_auto_form, widget
 
 sys.path.append("../../..")
 
@@ -43,38 +42,66 @@ class FriendProfile(BaseModel):
     #created_by_system: Optional[bool] = None
     #is_public: Optional[bool] = False
 
-new_friend_modal1 = Modal(
-    "Create Friend",
-    key="new-friend-modal",
-    # Optional
-    padding=10,  # default value
-    max_width=744,  # default value
-)
-if new_friend_modal1.is_open():
-    with new_friend_modal1.container():
-        data = {}
-        friendprofile = FriendProfile(**data)
-        sp.pydantic_input(model=friendprofile, key="newfriend")
-        submit_button = st.form_submit_button(label="Submit")
-        st.button("close", on_click=lambda *a: new_friend_modal1.close(rerun_condition=False))
+# new_friend_modal1 = Modal(
+#     "Create Friend",
+#     key="new-friend-modal",
+#     # Optional
+#     padding=10,  # default value
+#     max_width=744,  # default value
+# )
+# if new_friend_modal1.is_open():
+#     with new_friend_modal1.container():
+#         data = {}
+#         friendprofile = FriendProfile(**data)
+#         sp.pydantic_input(model=friendprofile, key="newfriend")
+#         submit_button = st.form_submit_button(label="Submit")
+#         st.button("close", on_click=lambda *a: new_friend_modal1.close(rerun_condition=False))
+#
+# friend_modal = Modal(
+#     "Friend Details",
+#     key="friend-modal",
+#     # Optional
+#     padding=10,  # default value
+#     max_width=744,  # default value
+# )
+# if friend_modal.is_open():
+#     with friend_modal.container():
+#         st.write("Friend Profile")
+#         data = get_friend_profile(st.session_state.selectedfriend)
+#         if data.get("interests"):
+#             data["interests"] = data["interests"].split(",")
+#         friendprofile = FriendProfile(**data)
+#         sp.pydantic_input(model=friendprofile, key="friend")
+#         submit_button = st.form_submit_button(label="Submit")
+#         st.button("close", on_click=lambda *a: friend_modal.close(rerun_condition=False))
 
-friend_modal = Modal(
-    "Friend Details",
-    key="friend-modal",
-    # Optional
-    padding=10,  # default value
-    max_width=744,  # default value
-)
-if friend_modal.is_open():
-    with friend_modal.container():
-        st.write("Friend Profile")
-        data = get_friend_profile(st.session_state.selectedfriend)
-        if data.get("interests"):
-            data["interests"] = data["interests"].split(",")
-        friendprofile = FriendProfile(**data)
-        sp.pydantic_input(model=friendprofile, key="friend")
-        submit_button = st.form_submit_button(label="Submit")
-        st.button("close", on_click=lambda *a: friend_modal.close(rerun_condition=False))
+@st.experimental_dialog("Friend Profile")
+def show_friend_profile(friend_id):
+    #import streamlit_pydantic as sp
+
+    data = get_friend_profile(friend_id)
+    if data.get("interests"):
+        data["interests"] = data["interests"].split(",")
+    friendprofile = FriendProfile(**data)
+    with st_auto_form("form_4", model=FriendProfile) as  form2:
+        submitted = st.form_submit_button("Submit")
+        if submitted:
+            st.rerun()
+
+    #sp.pydantic_input(model=friendprofile, key="friend")
+    # if st.form_submit_button(label="Submit"):
+    #     #st.button("close", on_click=lambda *a: new_friend_modal1.close(rerun_condition=False))
+    #     st.rerun()
+@st.experimental_dialog("Friend Profile")
+def new_friend_profile():
+    import streamlit_pydantic as sp
+
+    data = {}
+    friendprofile = FriendProfile(**data)
+    sp.pydantic_input(model=friendprofile, key="newfriend")
+    if st.form_submit_button(label="Submit"):
+        #st.button("close", on_click=lambda *a: new_friend_modal1.close(rerun_condition=False))
+        st.rerun()
 
 
 def on_user_submit():
@@ -91,12 +118,6 @@ def on_user_submit():
 
 @auth_decorator
 def render():
-    if friend_modal.is_open():
-        st.markdown(
-            f"<div class='model-content'</div>",
-            unsafe_allow_html=True)
-    else:
-
         st.markdown(
             f"<div class='header-wrap'><div>%nbsp;.</div><div class='header-right'><img src='{st.session_state.usersession.get('imageUrl')}'/><span>{st.session_state.usersession.get('fullName', '&nbsp;')}</span></div></div>",
             unsafe_allow_html=True)
@@ -116,7 +137,8 @@ def render():
                 st.markdown("<div class='p__h full-length shaded'></div>", unsafe_allow_html=True)
                 name_clicked = st.button("[+] Add a Friend")
                 if name_clicked:
-                    new_friend_modal1.open()
+                    new_friend_profile( )
+                    #new_friend_modal1.open()
                 friends = get_friend_list()
                 if friends:
                     icons = ["file-earmark-person"] * len(friends)
@@ -134,7 +156,7 @@ def render():
                         st.markdown(f"<div class='friend-label'></div>", unsafe_allow_html=True)
                         name_clicked = st.button(friend[0].get('name'))
                         if name_clicked:
-                            friend_modal.open()
+                            show_friend_profile(st.session_state.selectedfriend)
                             pass
                     with st.container():
                         st.chat_input(key='user_query', on_submit=on_user_submit)

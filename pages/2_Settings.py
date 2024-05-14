@@ -4,7 +4,6 @@ from typing import Optional
 from pydantic import BaseModel
 from streamlit_option_menu import option_menu
 import streamlit as st
-import streamlit_pydantic as sp
 
 from chat_util import get_user
 from util import page_init, auth_decorator
@@ -50,6 +49,7 @@ def render():
                 """)
             elif selected == "My Profile":
                 with st.form(key="pydantic_form1"):
+                    import streamlit_pydantic as sp
                     # Render input model -> input data is accesible via st.session_state["input_data"]
                     data = {}
                     if "user" not in st.session_state:

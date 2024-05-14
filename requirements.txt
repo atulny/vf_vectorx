@@ -9,3 +9,8 @@ pypdf
 docx2txt
 langchain
 faiss-cpu
+streamlit-js-eval
+streamlit-float
+streamlit-extras
+streamlit-modal
+streamlit-option-menu

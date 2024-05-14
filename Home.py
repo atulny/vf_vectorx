@@ -1,4 +1,5 @@
 import base64
+import os
 from time import sleep
 
 import streamlit as st
@@ -49,7 +50,7 @@ with st.container():
                     <div class='main-wrap-tips'>Click on the icon below for Login status</div>
                     </div>
                     """,unsafe_allow_html=True)
-        data:dict = clerkjs({"clerkPubKey": "pk_test_cHJpbWUtc2hyaW1wLTQwLmNsZXJrLmFjY291bnRzLmRldiQ"})
+        data:dict = clerkjs({"clerkPubKey": os.environ.get("CLERKPUBKEY")})
         if data:
             current_status = st.session_state.usersession.get("status")
             if data.get("status") != current_status:
@@ -66,7 +67,7 @@ with st.container():
             st.subheader("MISSION")
             st.markdown("""Chat app for people to communicate with a virtual friend when they are feeling lonely or just need someone to talk to. Virtual friend demographics can be random or personalized. Y"
                             our virtual friend gets to know you and remembers to check-in on occasion. Powered by LLM.""")
-            streamlit_js_eval(js_expressions="self.parent.parent != top && top.location.reload()")
+            streamlit_js_eval(js_expressions="self.parent != top && top.location.reload()")
             set_bg_hack("./asset/hero-1-5.png")
             streamlit_js_eval(js_expressions=f"""
                 let fn = ()=>{{         

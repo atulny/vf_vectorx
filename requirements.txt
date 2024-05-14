@@ -1,16 +1,8 @@
 streamlit
 python-dotenv
 streamlit-extras
-openai
-chainlit
-chromadb==0.4.18
-tiktoken
-pypdf
-docx2txt
-langchain
-faiss-cpu
 streamlit-js-eval
 streamlit-float
-streamlit-extras
 streamlit-modal
 streamlit-option-menu
+streamlit-pydantic

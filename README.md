@@ -1,7 +1,7 @@
 ## Setup
 
 git clone https://github.com/atulny/vf_vectorx.git
-
+branch main
 
 ### Create venv
   python 3.11

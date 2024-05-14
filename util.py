@@ -63,6 +63,8 @@ def page_init():
        font-size:150%;
      }
     .main-wrap{
+        background-color:#f0f2f6;
+        padding:1rem 2rem .5rem 2rem;
     }
     .main-wrap .main-wrap-header{
              font-size:180%;
@@ -72,7 +74,7 @@ def page_init():
     }
     .main-wrap .main-wrap-tips{
         font-size90%;
-        color:#999;
+        color:#666;
         font-style: italic;
     }
     .main-wrap .main-wrap-sub-header{

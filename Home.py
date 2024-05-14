@@ -58,16 +58,15 @@ with st.container():
                 try:
                     if current_status == "active" or current_status == "No session":
                         ## HACK ALERT
-                        streamlit_js_eval(js_expressions="parent.window.location.reload()")
+                        streamlit_js_eval(js_expressions="top.location.reload()")
                 except:
                     pass
-            #print(st.session_state.usersession)
             ## HACK ALERT
             # reload the page if the main is loaded in the iframe after redirect
             st.subheader("MISSION")
             st.markdown("""Chat app for people to communicate with a virtual friend when they are feeling lonely or just need someone to talk to. Virtual friend demographics can be random or personalized. Y"
                             our virtual friend gets to know you and remembers to check-in on occasion. Powered by LLM.""")
-            streamlit_js_eval(js_expressions="self.parent != top && top.location.reload()")
+            streamlit_js_eval(js_expressions="(self.parent.parent != self.parent ) && top.location.reload()")
             set_bg_hack("./asset/hero-1-5.png")
             streamlit_js_eval(js_expressions=f"""
                 let fn = ()=>{{         

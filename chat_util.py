@@ -124,15 +124,31 @@ def load_friend_messages(friend_id):
 
     return conversation
 
+def refresh_user_data():
+    data = get_user()
+    st.session_state.user = data
+@error_decorator
+def create_friend(data):
+    auth = get_auth()
+    response = requests.post(f"{BASE_URL}/friend_profile",
+            headers={"Content-Type":"application/json", "Accept": "application/json","Authorization":auth},
+                data=json.dumps(data) )
+    result =  response.json()
+
+    return result
 @error_decorator
 def get_friend_list():
     user = st.session_state.user
     friends = user.get("friend_ids")  if user else []
     return friends
-
+@error_decorator
+def get_friend_list():
+    user = st.session_state.user
+    friends = user.get("friend_ids")  if user else []
+    return friends
 def get_friend_profile(friend_id):
     auth = get_auth()
-    print(f"############################ {auth} ############################")
+    #print(f"############################ {auth} ############################")
     result = requests.get(f"{BASE_URL}/friend_profile?id={friend_id}", headers={"Authorization": auth, "Accept": "application/json"})
     result = result.json()
     data = result.get("data")
@@ -140,7 +156,7 @@ def get_friend_profile(friend_id):
 @error_decorator
 def get_user():
     auth = get_auth()
-    print(f"############################ {auth} ############################")
+    #print(f"############################ {auth} ############################")
     result = requests.get(f"{BASE_URL}/user_profile",headers={"Authorization":auth,"Accept": "application/json"})
     result = result.json()
     user =  result.get("data")

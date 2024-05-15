@@ -8,7 +8,8 @@ from streamlit_option_menu import option_menu
 import streamlit as st
 
 from chat_util import init_messages, get_user, get_friend_list, load_friend_messages, get_messages, get_response, \
-    chat_page_init, get_friend_profile
+    chat_page_init, get_friend_profile, create_friend, refresh_user_data
+from form_util import TextInput, render_fields
 from util import auth_decorator
 from typing import Annotated
 from streamlit_pydantic_form import st_auto_form, widget
@@ -23,6 +24,16 @@ class Location(BaseModel):
     city: Optional[str] = None
     state: Optional[str] = None
     country: Optional[str] = "USA"
+
+Friend_profile = [
+    {"name":"name", "type":str},
+    {"name": "dob_ts", "type": str},
+    {"name": "gender", "type": str},
+    {"name": "description", "type": str},
+    {"name": "interests", "type": str},
+    {"name": "location", "type": str}
+
+]
 class FriendProfile(BaseModel):
     #id: Optional[str] = None
     name: Optional[str] = None
@@ -77,31 +88,29 @@ class FriendProfile(BaseModel):
 
 @st.experimental_dialog("Friend Profile")
 def show_friend_profile(friend_id):
-    #import streamlit_pydantic as sp
-
     data = get_friend_profile(friend_id)
-    if data.get("interests"):
-        data["interests"] = data["interests"].split(",")
-    friendprofile = FriendProfile(**data)
-    with st_auto_form("form_4", model=FriendProfile) as  form2:
-        submitted = st.form_submit_button("Submit")
-        if submitted:
+    form_key="friend_profile"
+    with st.form(form_key):
+        render_fields(Friend_profile, data,form_key)
+
+        if st.form_submit_button("Submit"):
+            ## collect dtata and save
             st.rerun()
 
-    #sp.pydantic_input(model=friendprofile, key="friend")
-    # if st.form_submit_button(label="Submit"):
-    #     #st.button("close", on_click=lambda *a: new_friend_modal1.close(rerun_condition=False))
-    #     st.rerun()
 @st.experimental_dialog("Friend Profile")
 def new_friend_profile():
-    import streamlit_pydantic as sp
-
     data = {}
-    friendprofile = FriendProfile(**data)
-    sp.pydantic_input(model=friendprofile, key="newfriend")
-    if st.form_submit_button(label="Submit"):
-        #st.button("close", on_click=lambda *a: new_friend_modal1.close(rerun_condition=False))
+    if st.button("Surprise Me"):
+        create_friend({"surprise_me":True})
+        refresh_user_data()
         st.rerun()
+
+    form_key = "new_friend_profile"
+    with st.form(form_key):
+        render_fields(Friend_profile, data, form_key)
+        if st.form_submit_button("Submit"):
+            ## collect data and save
+            st.rerun()
 
 
 def on_user_submit():
@@ -124,8 +133,7 @@ def render():
 
         init_messages()
         if not st.session_state.user:
-            data = get_user()
-            st.session_state.user = data
+            refresh_user_data()
 
 
         with st.container():

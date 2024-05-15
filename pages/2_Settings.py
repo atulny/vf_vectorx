@@ -5,23 +5,32 @@ from pydantic import BaseModel
 from streamlit_option_menu import option_menu
 import streamlit as st
 
-from chat_util import get_user
+from chat_util import get_user, refresh_user_data
+from form_util import render_fields
 from util import page_init, auth_decorator
 
 st.set_page_config(layout="wide",page_title = "Settings")
 
-class Location(BaseModel):
-    city: Optional[str] = None
-    state: Optional[str] = None
-    country: Optional[str] = "USA"
-class UserProfile(BaseModel):
-    #user_id: Optional[str] = None
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    dob_ts: Optional[int] = None
-    gender: Optional[str] = None
-    location : Optional[Location]=None
+# class Location(BaseModel):
+#     city: Optional[str] = None
+#     state: Optional[str] = None
+#     country: Optional[str] = "USA"
+# class UserProfile(BaseModel):
+#     #user_id: Optional[str] = None
+#     first_name: Optional[str] = None
+#     last_name: Optional[str] = None
+#     dob_ts: Optional[int] = None
+#     gender: Optional[str] = None
+#     location : Optional[Location]=None
 
+User_Profile=[
+    {"name":"first_name","type": str},
+    {"name": "last_name", "type": str},
+    {"name": "dob_ts", "type": str},
+    {"name": "gender", "type": str},
+    {"name": "location", "type": str}
+
+]
 page_init()
 @auth_decorator
 def render():
@@ -48,18 +57,21 @@ def render():
                  and ensure that the data is stored in our secure databases.
                 """)
             elif selected == "My Profile":
-                with st.form(key="pydantic_form1"):
-                    import streamlit_pydantic as sp
+                form_key = "my_profile"
+                with st.form(key=form_key):
+                    # import streamlit_pydantic as sp
                     # Render input model -> input data is accesible via st.session_state["input_data"]
                     data = {}
                     if "user" not in st.session_state:
-                        data = get_user()
-                        st.session_state.user = data
+                        refresh_user_data()
                     else:
                         data = st.session_state.get("user",{})
-                    userprofile=UserProfile(**data)
-                    sp.pydantic_input(model=userprofile, key="user")
-                    submit_button = st.form_submit_button(label="Submit")
+                    # userprofile=UserProfile(**data)
+                    render_fields(User_Profile, data, form_key)
+                    if st.form_submit_button("Submit"):
+                        pass
+                    # sp.pydantic_input(model=userprofile, key="user")
+                    #submit_button = st.form_submit_button(label="Submit")
                 pass
 
 render()

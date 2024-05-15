@@ -9,8 +9,8 @@ from streamlit_js_eval import streamlit_js_eval
 from util import page_init
 
 st.set_page_config(layout="wide",page_title = "Junctions: Virtual Friends")
-#query_params = st.query_params
-#print(query_params)
+query_params = st.query_params
+print(query_params.get("noreload"))
 from clerkjs import clerkjs
 
 

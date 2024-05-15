@@ -1,7 +1,7 @@
 import datetime
 from dataclasses import Field
 from typing import Optional
-from pydantic import BaseModel
+#from pydantic import BaseModel
 from streamlit_option_menu import option_menu
 import streamlit as st
 

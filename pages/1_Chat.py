@@ -2,7 +2,7 @@ import sys
 from time import sleep
 from typing import Optional
 
-from pydantic import BaseModel
+#from pydantic import BaseModel
 from streamlit_float import *
 from streamlit_option_menu import option_menu
 import streamlit as st
@@ -12,7 +12,7 @@ from chat_util import init_messages, get_user, get_friend_list, load_friend_mess
 from form_util import TextInput, render_fields
 from util import auth_decorator
 from typing import Annotated
-from streamlit_pydantic_form import st_auto_form, widget
+#from streamlit_pydantic_form import st_auto_form, widget
 
 sys.path.append("../../..")
 

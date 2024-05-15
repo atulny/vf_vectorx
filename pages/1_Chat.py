@@ -1,5 +1,5 @@
 import sys
-from time import sleep
+# from time import sleep
 from typing import Optional
 
 #from pydantic import BaseModel
@@ -7,11 +7,11 @@ from streamlit_float import *
 from streamlit_option_menu import option_menu
 import streamlit as st
 
-from chat_util import init_messages, get_user, get_friend_list, load_friend_messages, get_messages, get_response, \
+from chat_util import init_messages,  get_friend_list, load_friend_messages, get_messages, get_response, \
     chat_page_init, get_friend_profile, create_friend, refresh_user_data
-from form_util import TextInput, render_fields
+from form_util import   render_fields
 from util import auth_decorator
-from typing import Annotated
+#from typing import Annotated
 #from streamlit_pydantic_form import st_auto_form, widget
 
 sys.path.append("../../..")
@@ -20,11 +20,11 @@ st.set_page_config(layout="wide", page_title="Chat")
 
 chat_page_init()  # lots of magic happens here
 
-class Location(BaseModel):
-    city: Optional[str] = None
-    state: Optional[str] = None
-    country: Optional[str] = "USA"
-
+# class Location(BaseModel):
+#     city: Optional[str] = None
+#     state: Optional[str] = None
+#     country: Optional[str] = "USA"
+#
 Friend_profile = [
     {"name":"name", "type":str},
     {"name": "dob_ts", "type": str},
@@ -34,24 +34,24 @@ Friend_profile = [
     {"name": "location", "type": str}
 
 ]
-class FriendProfile(BaseModel):
-    #id: Optional[str] = None
-    name: Optional[str] = None
-    dob_ts: Optional[int] = None
-    gender: Optional[str] = None
-    description: Optional[str] = None
-
-    #preferred_pronoun: Optional[str] = None
-    #living_situation: Optional[str] = None
-    #get_friend_profileinteraction_frequency: Optional[str] = None
-    interests: Optional[list[str]] = []
-    #hobbies: Optional[list[str]] = []
-    #reminders_preference: Optional[bool] = False
-    #created_by: Optional[str] = None
-    #created_on: Optional[datetime.datetime] = None
-    location: Optional[Location] = None
-    #created_by_system: Optional[bool] = None
-    #is_public: Optional[bool] = False
+# class FriendProfile(BaseModel):
+#     #id: Optional[str] = None
+#     name: Optional[str] = None
+#     dob_ts: Optional[int] = None
+#     gender: Optional[str] = None
+#     description: Optional[str] = None
+#
+#     #preferred_pronoun: Optional[str] = None
+#     #living_situation: Optional[str] = None
+#     #get_friend_profileinteraction_frequency: Optional[str] = None
+#     interests: Optional[list[str]] = []
+#     #hobbies: Optional[list[str]] = []
+#     #reminders_preference: Optional[bool] = False
+#     #created_by: Optional[str] = None
+#     #created_on: Optional[datetime.datetime] = None
+#     location: Optional[Location] = None
+#     #created_by_system: Optional[bool] = None
+#     #is_public: Optional[bool] = False
 
 # new_friend_modal1 = Modal(
 #     "Create Friend",

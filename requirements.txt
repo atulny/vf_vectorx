@@ -5,3 +5,4 @@ streamlit-js-eval
 streamlit-float
 streamlit-modal
 streamlit-option-menu
+Streamlit-tags

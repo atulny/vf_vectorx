@@ -12,6 +12,7 @@ st.set_page_config(layout="wide",page_title = "Junctions: Virtual Friends")
 query_params = st.query_params
 print(query_params.get("noreload"))
 from clerkjs import clerkjs
+from streamlit_elements import elements, mui, html
 
 
 def set_bg_hack(main_bg):
@@ -64,8 +65,9 @@ with st.container():
                     pass
 
             st.subheader("MISSION")
-            st.markdown("""Chat app for people to communicate with a virtual friend when they are feeling lonely or just need someone to talk to. Virtual friend demographics can be random or personalized. Y"
-                            our virtual friend gets to know you and remembers to check-in on occasion. Powered by LLM.""")
+            st.markdown("""Chat app for people to communicate with a virtual friend when they are feeling lonely or just 
+             need someone to talk to. Virtual friend demographics can be random or personalized. 
+                      Your virtual friend gets to know you and remembers to check-in on occasion. Powered by LLM.""")
 
             ## HACK ALERT
             # reload the page if the main is loaded in the iframe after redirect

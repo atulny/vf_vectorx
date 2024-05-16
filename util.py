@@ -90,7 +90,7 @@ def page_init():
     if not "usersession" in st.session_state:
         st.session_state.usersession = {"status": 'Unknown'}
     st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-    logo_url = './asset/icon2.png'
+    logo_url = './asset/icon3.png'
     add_logo(logo_url)
 
 def auth_decorator(fn):

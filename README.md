@@ -14,4 +14,8 @@ branch main
 ### Run
 `streamlit run Home.py`
 
+or 
+
+ `python start.py`
+
 

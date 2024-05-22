@@ -19,12 +19,7 @@ sys.path.append("../../..")
 st.set_page_config(layout="wide", page_title="Chat")
 
 chat_page_init()  # lots of magic happens here
-
-# class Location(BaseModel):
-#     city: Optional[str] = None
-#     state: Optional[str] = None
-#     country: Optional[str] = "USA"
-#
+ 
 Friend_profile = [
     {"name":"name", "type":str},
     {"name": "dob_ts", "type": str},
@@ -34,57 +29,7 @@ Friend_profile = [
     {"name": "location", "type": str}
 
 ]
-# class FriendProfile(BaseModel):
-#     #id: Optional[str] = None
-#     name: Optional[str] = None
-#     dob_ts: Optional[int] = None
-#     gender: Optional[str] = None
-#     description: Optional[str] = None
-#
-#     #preferred_pronoun: Optional[str] = None
-#     #living_situation: Optional[str] = None
-#     #get_friend_profileinteraction_frequency: Optional[str] = None
-#     interests: Optional[list[str]] = []
-#     #hobbies: Optional[list[str]] = []
-#     #reminders_preference: Optional[bool] = False
-#     #created_by: Optional[str] = None
-#     #created_on: Optional[datetime.datetime] = None
-#     location: Optional[Location] = None
-#     #created_by_system: Optional[bool] = None
-#     #is_public: Optional[bool] = False
-
-# new_friend_modal1 = Modal(
-#     "Create Friend",
-#     key="new-friend-modal",
-#     # Optional
-#     padding=10,  # default value
-#     max_width=744,  # default value
-# )
-# if new_friend_modal1.is_open():
-#     with new_friend_modal1.container():
-#         data = {}
-#         friendprofile = FriendProfile(**data)
-#         sp.pydantic_input(model=friendprofile, key="newfriend")
-#         submit_button = st.form_submit_button(label="Submit")
-#         st.button("close", on_click=lambda *a: new_friend_modal1.close(rerun_condition=False))
-#
-# friend_modal = Modal(
-#     "Friend Details",
-#     key="friend-modal",
-#     # Optional
-#     padding=10,  # default value
-#     max_width=744,  # default value
-# )
-# if friend_modal.is_open():
-#     with friend_modal.container():
-#         st.write("Friend Profile")
-#         data = get_friend_profile(st.session_state.selectedfriend)
-#         if data.get("interests"):
-#             data["interests"] = data["interests"].split(",")
-#         friendprofile = FriendProfile(**data)
-#         sp.pydantic_input(model=friendprofile, key="friend")
-#         submit_button = st.form_submit_button(label="Submit")
-#         st.button("close", on_click=lambda *a: friend_modal.close(rerun_condition=False))
+ 
 
 @st.experimental_dialog("Friend Profile")
 def show_friend_profile(friend_id):

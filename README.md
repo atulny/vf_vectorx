@@ -1,3 +1,6 @@
+Streamlit based application
+- showcasing the power/ease of Streamlit as well as various hacks to customize it
+
 ## Setup
 
 git clone https://github.com/atulny/vf_vectorx.git
